@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { ChevronRight, ChevronDown, Folder, FolderOpen, Plus, GripVertical, FileCode } from 'lucide-react';
+import { ChevronRight, ChevronDown, Folder, FolderOpen, Plus, FileCode } from 'lucide-react';
+import { useDroppable } from '@dnd-kit/core';
 import { twMerge } from 'tailwind-merge';
 import type { CollectionTree } from '@/types';
 
@@ -31,12 +32,19 @@ const CollectionItem: React.FC<CollectionItemProps> = ({
   const isExpanded = expandedIds.has(collection.id);
   const isSelected = String(selectedId) === String(collection.id);
 
+  const { setNodeRef, isOver } = useDroppable({
+    id: `collection-${collection.id}`,
+    data: { type: 'collection', collection },
+  });
+
   return (
     <div>
       <div
+        ref={setNodeRef}
         className={twMerge(
-          'group flex items-center gap-1 py-1.5 px-2 rounded-lg cursor-pointer transition-colors',
-          isSelected ? 'bg-indigo-500/20' : 'hover:bg-gray-700/50'
+          'group flex items-center gap-1 py-1.5 px-2 rounded-lg cursor-pointer transition-all duration-200',
+          isSelected ? 'bg-indigo-500/20' : 'hover:bg-gray-700/50',
+          isOver && 'bg-indigo-500/30 border-2 border-indigo-500'
         )}
         style={{ paddingLeft: `${level * 16 + 8}px` }}
       >
@@ -103,6 +111,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const [expandedIds, setExpandedIds] = useState<Set<number>>(new Set());
 
+  const { setNodeRef: setAllRef, isOver: isOverAll } = useDroppable({
+    id: 'collection-0',
+    data: { type: 'collection', collection: { id: 0, name: '全部' } },
+  });
+
   const handleToggle = (id: number) => {
     setExpandedIds((prev) => {
       const next = new Set(prev);
@@ -134,10 +147,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       <div className="flex-1 overflow-auto p-2">
         <div
+          ref={setAllRef}
           onClick={() => onSelect?.({ id: 0, name: '全部', parent_id: null, level: 0, children: [], snippet_count: 0, created_at: '', updated_at: '' } as any)}
           className={twMerge(
             'flex items-center gap-1 py-1.5 px-2 rounded-lg cursor-pointer transition-colors',
-            selectedId === 0 || selectedId === '0' ? 'bg-indigo-500/20' : 'hover:bg-gray-700/50'
+            selectedId === 0 || selectedId === '0' ? 'bg-indigo-500/20' : 'hover:bg-gray-700/50',
+            isOverAll && 'bg-indigo-500/30 border-2 border-indigo-500'
           )}
         >
           <div className="w-5" />

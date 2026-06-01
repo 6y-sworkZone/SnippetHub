@@ -16,7 +16,6 @@ import {
   ToggleLeft,
   ToggleRight,
   GripVertical,
-  Folder,
 } from 'lucide-react';
 import {
   DndContext,
@@ -219,7 +218,6 @@ const Editor: React.FC = () => {
   const [newCollectionParentId, setNewCollectionParentId] = useState<number | ''>('');
   const [activeId, setActiveId] = useState<string | null>(null);
   const [activeSnippet, setActiveSnippet] = useState<Snippet | null>(null);
-  const [dragOverCollectionId, setDragOverCollectionId] = useState<number | null>(null);
 
   const [formData, setFormData] = useState<Partial<SnippetCreate>>({
     title: '',
@@ -435,7 +433,6 @@ const Editor: React.FC = () => {
     const { active, over } = event;
     setActiveId(null);
     setActiveSnippet(null);
-    setDragOverCollectionId(null);
 
     if (!over || active.id === over.id) return;
 
@@ -462,27 +459,6 @@ const Editor: React.FC = () => {
 
   const getLanguageColor = (lang: string) => {
     return LANGUAGE_COLORS[lang] || '#6366f1';
-  };
-
-  const renderCollectionDropZones = (collections: CollectionTree[], level: number = 0): React.ReactNode => {
-    return collections.map((collection) => (
-      <React.Fragment key={collection.id}>
-        <div
-          data-id={`collection-${collection.id}`}
-          className={twMerge(
-            'flex items-center gap-2 py-1.5 px-2 rounded-lg transition-colors',
-            dragOverCollectionId === collection.id ? 'bg-indigo-500/30 border-2 border-indigo-500' : ''
-          )}
-          style={{ paddingLeft: `${level * 16 + 8}px` }}
-        >
-          <Folder size={16} style={{ color: '#6366f1' }} />
-          <span className="text-sm text-gray-300">{collection.name}</span>
-        </div>
-        {collection.children && collection.children.length > 0 && (
-          renderCollectionDropZones(collection.children, level + 1)
-        )}
-      </React.Fragment>
-    ));
   };
 
   return (
