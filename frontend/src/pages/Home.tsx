@@ -7,6 +7,7 @@ import { useSnippetStore } from '@/store';
 import { snippetApi } from '@/services/api';
 import { copyToClipboard } from '@/utils/copy';
 import { useToast } from '@/components/Toast';
+import { useNewCollection } from '@/hooks/useNewCollection';
 import type { Snippet } from '@/types';
 
 const LANGUAGE_COLORS: Record<string, string> = {
@@ -36,6 +37,7 @@ const Home: React.FC = () => {
   const navigate = useNavigate();
   const { showToast } = useToast();
   const { collections, fetchCollections, loading } = useSnippetStore();
+  const { openModal: openNewCollectionModal, renderModal: renderNewCollectionModal } = useNewCollection();
   const [hotSnippets, setHotSnippets] = useState<Snippet[]>([]);
   const [recentSnippets, setRecentSnippets] = useState<Snippet[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -184,6 +186,7 @@ const Home: React.FC = () => {
         <Sidebar
           collections={collections}
           onSelect={(col) => navigate(`/editor?collection=${col.id === 0 ? '' : col.id}`)}
+          onNewCollection={openNewCollectionModal}
         />
       }
     >
@@ -269,6 +272,7 @@ const Home: React.FC = () => {
           )}
         </section>
       </div>
+      {renderNewCollectionModal()}
     </Layout>
   );
 };

@@ -19,6 +19,7 @@ import { useSnippetStore } from '@/store';
 import { searchApi, snippetApi } from '@/services/api';
 import { copyToClipboard } from '@/utils/copy';
 import { highlightText } from '@/utils/highlight';
+import { useNewCollection } from '@/hooks/useNewCollection';
 import type { SnippetSearchResult } from '@/types';
 
 const LANGUAGES = [
@@ -80,6 +81,7 @@ const Search: React.FC = () => {
   const location = useLocation();
   const { showToast } = useToast();
   const { collections, fetchCollections, tags, fetchTags, loading } = useSnippetStore();
+  const { openModal: openNewCollectionModal, renderModal: renderNewCollectionModal } = useNewCollection();
 
   const initialQuery = (location.state as { q?: string })?.q || '';
 
@@ -191,6 +193,7 @@ const Search: React.FC = () => {
         <Sidebar
           collections={collections}
           onSelect={(col) => navigate(`/editor?collection=${col.id === 0 ? '' : col.id}`)}
+          onNewCollection={openNewCollectionModal}
         />
       }
     >
@@ -465,6 +468,7 @@ const Search: React.FC = () => {
           )}
         </div>
       </div>
+      {renderNewCollectionModal()}
     </Layout>
   );
 };
