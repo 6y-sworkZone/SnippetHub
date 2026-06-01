@@ -89,14 +89,6 @@ const Home: React.FC = () => {
     return LANGUAGE_COLORS[lang] || '#6366f1';
   };
 
-  const sidebarCollections = collections.map((c) => ({
-    id: c.id,
-    name: c.name,
-    type: 'folder' as const,
-    children: [],
-    expanded: false,
-  }));
-
   const SnippetCard: React.FC<{ snippet: Snippet; index?: number }> = ({ snippet, index }) => (
     <div
       onClick={() => handleCardClick(snippet.id)}
@@ -190,8 +182,8 @@ const Home: React.FC = () => {
     <Layout
       sidebar={
         <Sidebar
-          collections={sidebarCollections}
-          onSelect={(col) => navigate(`/editor?collection=${col.id}`)}
+          collections={collections}
+          onSelect={(col) => navigate(`/editor?collection=${col.id === 0 ? '' : col.id}`)}
         />
       }
     >

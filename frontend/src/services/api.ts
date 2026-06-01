@@ -87,7 +87,7 @@ export const shareApi = {
 };
 
 export const searchApi = {
-  searchSnippets: (params: { q: string; language?: string; tags?: string[]; limit?: number }) =>
+  searchSnippets: (params: { q: string; language?: string; tags?: string; limit?: number }) =>
     api.get<SearchResult<SnippetSearchResult>>('/api/search', { params }),
 };
 

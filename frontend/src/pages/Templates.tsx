@@ -135,20 +135,12 @@ const Templates: React.FC = () => {
     return LANGUAGE_COLORS[lang] || '#6366f1';
   };
 
-  const sidebarCollections = collections.map((c) => ({
-    id: c.id,
-    name: c.name,
-    type: 'folder' as const,
-    children: [],
-    expanded: false,
-  }));
-
   return (
     <Layout
       sidebar={
         <Sidebar
-          collections={sidebarCollections}
-          onSelect={(col) => navigate(`/editor?collection=${col.id}`)}
+          collections={collections}
+          onSelect={(col) => navigate(`/editor?collection=${col.id === 0 ? '' : col.id}`)}
         />
       }
     >

@@ -108,7 +108,7 @@ const Search: React.FC = () => {
       const params: {
         q: string;
         language?: string;
-        tag?: string;
+        tags?: string;
         page: number;
         page_size: number;
       } = {
@@ -122,7 +122,7 @@ const Search: React.FC = () => {
       }
 
       if (selectedTags.length > 0) {
-        params.tag = selectedTags.join(',');
+        params.tags = selectedTags.join(',');
       }
 
       const res = await searchApi.searchSnippets(params);
@@ -167,14 +167,6 @@ const Search: React.FC = () => {
     return LANGUAGE_COLORS[lang] || '#6366f1';
   };
 
-  const sidebarCollections = collections.map((c) => ({
-    id: c.id,
-    name: c.name,
-    type: 'folder' as const,
-    children: [],
-    expanded: false,
-  }));
-
   const sortedResults = useMemo(() => {
     return [...results].sort((a, b) => b.relevance_score - a.relevance_score);
   }, [results]);
@@ -197,8 +189,8 @@ const Search: React.FC = () => {
     <Layout
       sidebar={
         <Sidebar
-          collections={sidebarCollections}
-          onSelect={(col) => navigate(`/editor?collection=${col.id}`)}
+          collections={collections}
+          onSelect={(col) => navigate(`/editor?collection=${col.id === 0 ? '' : col.id}`)}
         />
       }
     >

@@ -1,10 +1,11 @@
 import { create } from 'zustand';
-import type { Snippet, Collection, Language } from '../types';
+import type { Snippet, Collection, CollectionTree, Language } from '../types';
 import { snippetApi, collectionApi, metaApi } from '../services/api';
 
 interface SnippetState {
   snippets: Snippet[];
-  collections: Collection[];
+  collections: CollectionTree[];
+  collectionsFlat: Collection[];
   currentSnippet: Snippet | null;
   loading: boolean;
   languages: Language[];
@@ -22,6 +23,7 @@ interface SnippetState {
 export const useSnippetStore = create<SnippetState>((set, get) => ({
   snippets: [],
   collections: [],
+  collectionsFlat: [],
   currentSnippet: null,
   loading: false,
   languages: [],
@@ -40,8 +42,11 @@ export const useSnippetStore = create<SnippetState>((set, get) => ({
   fetchCollections: async () => {
     set({ loading: true });
     try {
-      const response = await collectionApi.getCollectionsFlat();
-      set({ collections: response.data });
+      const [treeRes, flatRes] = await Promise.all([
+        collectionApi.getCollections(),
+        collectionApi.getCollectionsFlat(),
+      ]);
+      set({ collections: treeRes.data, collectionsFlat: flatRes.data });
     } finally {
       set({ loading: false });
     }
